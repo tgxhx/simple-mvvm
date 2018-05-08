@@ -1,12 +1,13 @@
 import Mvvm from './src/index.js'
 
 window.mvvm = new Mvvm({
-  el: '#dark',
+  el: '#app',
   data: {
    message: 'hello world!'
+  },
+  render() {
+    return (
+      <div>{this.state.message}</div>
+    )
   }
-})
-
-document.querySelector('#input').addEventListener('input', (e) => {
-  mvvm.artist = e.target.value
 })

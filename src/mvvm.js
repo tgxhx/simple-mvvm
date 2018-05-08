@@ -1,21 +1,45 @@
 import Observer from './observer'
-import Compiler from './compiler'
+import updateElement from './diff'
 
 class Mvvm {
   constructor(options) {
-    let data = options.data
-    this._data = data
-    this.$options = options
-    this.initData(data)
-    Compiler(options.el, data)
+    this.vDoms = {
+      old: null,
+      new: null
+    }
+    this.init(options)
   }
   
-  initData(data) {
+  init(options) {
+    this.state = options.state
+    this.initState(options.state)
+    this.initEvent(options.methods)
+    this.root = document.querySelector(options.el)
+    this.render = options.render
+    this.vDoms.new = this.render()
+    this.initElement(this.root, this.vDoms.new)
+  }
+  
+  initState(data) {
     const keys = Object.keys(data)
     for (let i = 0; i < keys.length; i++) {
-      Proxy(this, '_data', keys[i])
+      Proxy(this, 'state', keys[i])
     }
     new Observer(this, data)
+  }
+  
+  initEvent(methods = {}) {
+    Object.keys(methods).forEach(method => {
+      this[method] = methods[method]
+    })
+  }
+  
+  initElement(root, initNode) {
+    updateElement(this, root, initNode)
+  }
+  
+  static createElement(type, props = {}, ...children) {
+    return {type, props, children};
   }
 }
 
@@ -33,4 +57,5 @@ function Proxy(target, sourceKey, key) {
   }
   Object.defineProperty(target, key, defineOptions)
 }
+
 export default Mvvm

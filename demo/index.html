@@ -2,28 +2,52 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="renderer" content="webkit">
+  <meta http-equiv="content-type" content="text/html; charset=UTF-8">
   <meta name="viewport"
         content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
   <title>MVVM</title>
+  <script src="https://cdn.bootcss.com/babel-standalone/7.0.0-beta.3/babel.min.js"></script>
 </head>
 <body>
-  <div id="dark">
-  {{message}}
-</div>
-  <input type="text" id="input">
+  <div id="root"></div>
   <script src="./mvvm.js"></script>
-  <script>
+  <script type="text/jsx">
+    // /** @jsx Mvvm.createElement */
     var mvvm = new Mvvm({
-      el: '#dark',
-      data: {
-        message: 'hello world!'
+      el: '#root',
+      state: {
+        message: 'hello world!',
+        color: 'red',
+        size: 18,
+        input: '123'
+      },
+      render() {
+        const {message} = this.state
+        return (
+          <div>
+            <p>value: {message}</p>
+            <div style={{'color': this.state.color, 'font-size': (this.state.size || 16) + 'px'}}>red</div>
+            <p onClick={this.ppp}>event</p>
+            <button onClick={this.increaseFz}>add</button><br/>
+            <hr/>
+            <input type="text" id="input" value={this.state.input} onInput={this.handleInput}/>
+            <p>{this.state.input}</p>
+          </div>
+        )
+      },
+      methods: {
+        ppp(e) {
+          console.log(e)
+          console.log(this)
+        },
+        increaseFz() {
+          this.state.size++
+        },
+        handleInput(e) {
+          this.state.input = e.target.value
+        }
       }
-    })
-
-    document.querySelector('#input').addEventListener('input', (e) => {
-      mvvm.message = e.target.value
     })
   </script>
 </body>

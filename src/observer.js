@@ -1,16 +1,14 @@
 import Compiler from './compiler'
 import Watcher from './watcher'
-let vm
 
 function Observer(_vm, obj) {
-  vm = _vm
   const keys = Object.keys(obj)
   for (let i = 0; i < keys.length; i++) {
-    defineReactive(obj, keys[i])
+    defineReactive(_vm, obj, keys[i])
   }
 }
 
-function defineReactive(obj, key) {
+function defineReactive(vm, obj, key) {
   let value = obj[key]
   const watcher = new Watcher()
   Object.defineProperty(obj, key, {
@@ -22,7 +20,7 @@ function defineReactive(obj, key) {
     set(newValue) {
       if (newValue === value) return
       value = newValue
-      watcher.notify(vm.$options.el, vm._data)
+      watcher.notify(vm, vm.vDoms)
     }
   })
 }
